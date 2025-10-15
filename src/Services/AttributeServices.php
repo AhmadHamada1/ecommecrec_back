@@ -77,6 +77,152 @@ class AttributeServices
         return $attr;
     }
 
+//     public function upsertAttributeWithItemsNoFlush(string $id, string $name, string $type, array $items): Attribute
+// {
+//     $attr = $this->attrRepo->find($id);
+//     if (!$attr) {
+//         $attr = new Attribute();
+//         $attr->id = $id;
+//     }
+
+//     $attr->name = $name;
+//     $attr->type = $type;
+//     $this->em->persist($attr);
+
+//     // find existing items for this attribute
+//     $existing = $this->itemRepo->findByAttribute($attr);
+//     $byId = [];
+//     foreach ($existing as $e) {
+//         $byId[$e->id] = $e;
+//     }
+
+//     $seen = [];
+
+//     foreach ($items as $i) {
+//         foreach (['id', 'value', 'displayValue'] as $k) {
+//             if (!array_key_exists($k, $i)) {
+//                 throw new UserError("AttributeItem for '{$id}' missing key '{$k}'");
+//             }
+//         }
+
+//         $itemId = $i['id'];
+//         $seen[$itemId] = true;
+
+//         if (isset($byId[$itemId])) {
+//             // update existing under this attribute
+//             $it = $byId[$itemId];
+//             $it->value        = $i['value'];
+//             $it->displayValue = $i['displayValue'];
+//         } else {
+//             // ✅ check globally if this AttributeItem already exists
+//             $it = $this->itemRepo->find($itemId);
+//             if (!$it) {
+//                 // create new if not found globally
+//                 $it = new AttributeItem();
+//                 $it->id           = $itemId;
+//                 $it->value        = $i['value'];
+//                 $it->displayValue = $i['displayValue'];
+//                 $this->em->persist($it);
+//             }
+
+//             // ✅ link attribute relation (if changed)
+//             $it->attribute = $attr;
+//         }
+
+//         // ensure relationship
+//         if (!$attr->items->contains($it)) {
+//             $attr->items->add($it);
+//         }
+//     }
+
+//     // remove leftovers (items no longer in input)
+//     foreach ($byId as $leftId => $leftover) {
+//         if (!isset($seen[$leftId])) {
+//             $this->em->remove($leftover);
+//         }
+//     }
+
+//     return $attr;
+// }
+
+// public function upsertAttributeWithItemsNoFlush(string $id, string $name, string $type, array $items): Attribute
+// {
+//     // 🔹 1. Find or create the Attribute itself
+//     $attr = $this->attrRepo->find($id);
+//     if (!$attr) {
+//         $attr = new Attribute();
+//         $attr->id = $id;
+//     }
+
+//     $attr->name = $name;
+//     $attr->type = $type;
+//     $this->em->persist($attr);
+
+//     // 🔹 2. Find existing items for this specific attribute
+//     $existing = $this->itemRepo->findByAttribute($attr);
+//     $byId = $this->itemRepo->indexById($existing);
+//     $seen = [];
+
+//     // 🔹 3. Iterate through incoming items
+//     foreach ($items as $i) {
+//         foreach (['id', 'value', 'displayValue'] as $k) {
+//             if (!array_key_exists($k, $i)) {
+//                 throw new \GraphQL\Error\UserError("AttributeItem for '{$id}' missing key '{$k}'");
+//             }
+//         }
+
+//         $itemId = $i['id'];
+//         $seen[$itemId] = true;
+
+//         if (isset($byId[$itemId])) {
+//             // ✅ Item already exists under this attribute → just update its data
+//             $it = $byId[$itemId];
+//             $it->value = $i['value'];
+//             $it->displayValue = $i['displayValue'];
+//         } else {
+//             // ✅ Try to find globally by ID (e.g. "Yes", "No")
+//             $existingItem = $this->itemRepo->find($itemId);
+
+//             if ($existingItem) {
+//                 // ✅ Reuse existing global item
+//                 $it = $existingItem;
+//                 // update its values in case they changed
+//                 $it->value = $i['value'];
+//                 $it->displayValue = $i['displayValue'];
+//             } else {
+//                 // ✅ Create new one if not exist globally
+//                 $it = new AttributeItem();
+//                 $it->id = $itemId;
+//                 $it->value = $i['value'];
+//                 $it->displayValue = $i['displayValue'];
+//                 $this->em->persist($it);
+//             }
+
+//             // ✅ Always attach to the current attribute
+//             $it->attribute = $attr;
+//         }
+
+//         // ✅ Ensure the relationship is set
+//         if (!$attr->items->contains($it)) {
+//             $attr->items->add($it);
+//         }
+
+//         $this->em->persist($it);
+//     }
+
+//     // 🔹 4. Remove old items that no longer exist in the new input
+//     foreach ($byId as $leftId => $leftover) {
+//         if (!isset($seen[$leftId])) {
+//             $this->em->remove($leftover);
+//         }
+//     }
+
+//     // 🔹 5. Return the attribute (flush will be done by caller)
+//     return $attr;
+// }
+
+
+
     public function createAttributeItem(Attribute $attribute, string $displayValue, string $value, string $id): AttributeItem
     {
         $item = new AttributeItem();

@@ -100,13 +100,13 @@ class ProductController
                         'type' => Type::listOf(self::$productType),
                         'resolve' => fn() => $productService->getAllProducts(),
                     ],
-                    'product' => [
-                        'type' => self::$productType,
-                        'args' => [
-                            'id' => Type::nonNull(Type::string()),
+                        'product' => [
+                            'type' => self::$productType,
+                            'args' => [
+                                'id' => Type::nonNull(Type::string()),
+                            ],
+                            'resolve' => fn($root, $args) => $productService->findOneProduct($args['id']),
                         ],
-                        'resolve' => fn($root, $args) => $productService->findOneProduct($args['id']),
-                    ],
                     'productsByCategory' => [
                         'type' => Type::listOf(self::$productType),
                         'args' => [

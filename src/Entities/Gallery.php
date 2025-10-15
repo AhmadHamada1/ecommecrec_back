@@ -15,7 +15,11 @@ class Gallery
     #[ORM\Column(type: "text")]
     public string $image_url;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: "gallery")]
+    // #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: "gallery")]
+    // #[ORM\JoinColumn(name: "product_id", referencedColumnName: "id", nullable: false, onDelete: "CASCADE")]
+    // public ?Product $product = null;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: "gallery", cascade: ["persist"])]
     #[ORM\JoinColumn(name: "product_id", referencedColumnName: "id", nullable: false, onDelete: "CASCADE")]
     public ?Product $product = null;
+
 }
