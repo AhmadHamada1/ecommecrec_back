@@ -3,7 +3,7 @@ services:
     image: php:8.1-apache
     container_name: ecommerce-php
     volumes:
-      - ./src:/var/www/html
+      - .:/var/www/html
     ports:
       - "8080:80"
     depends_on:
